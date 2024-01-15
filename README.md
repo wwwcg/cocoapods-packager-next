@@ -1,9 +1,6 @@
 # CocoaPods Packager
 
-[![Build Status](http://img.shields.io/travis/CocoaPods/cocoapods-packager/master.svg?style=flat)](https://travis-ci.org/CocoaPods/cocoapods-packager)
-[![Coverage Status](https://img.shields.io/coveralls/CocoaPods/cocoapods-packager.svg)](https://coveralls.io/r/CocoaPods/cocoapods-packager?branch=master)
-[![Gem Version](http://img.shields.io/gem/v/cocoapods-packager.svg?style=flat)](http://badge.fury.io/rb/cocoapods-packager)
-[![Code Climate](http://img.shields.io/codeclimate/github/CocoaPods/cocoapods-packager.svg?style=flat)](https://codeclimate.com/github/CocoaPods/cocoapods-packager)
+[![Gem Version](http://img.shields.io/gem/v/cocoapods-packager-next.svg?style=flat)](http://badge.fury.io/rb/cocoapods-packager-next)
 
 CocoaPods plugin which allows you to generate a framework or static library from a podspec.
 
@@ -20,13 +17,13 @@ There are still a number of advantages to developing against a `podspec`, even i
 ## Installation
 
 ```sh
-$ gem install cocoapods-packager
+$ gem install cocoapods-packager-next
 ```
 
 or add a line to your Gemfile:
 
 ```ruby
-gem "cocoapods-packager"
+gem "cocoapods-packager-next"
 ```
 
 then run `bundle install`.
