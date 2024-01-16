@@ -198,13 +198,14 @@ module Pod
       Dir.glob("#{headers_source_root}/**/*.h").
         each { |h| `ditto #{h} #{@fwk.headers_path}/#{h.sub(headers_source_root, '')}` }
 
+      module_map = nil
       # If custom 'module_map' is specified add it to the framework distribution
       # otherwise check if a header exists that is equal to 'spec.name', if so
       # create a default 'module_map' one using it.
-      if !@spec.module_map.nil?
+      if @spec.module_map
         module_map_file = @file_accessors.flat_map(&:module_map).first
         module_map = File.read(module_map_file) if Pathname(module_map_file).exist?
-      elsif File.exist?("#{@public_headers_root}/#{@spec.name}/#{@spec.name}.h")
+      elsif @spec.module_map.nil? && File.exist?("#{@public_headers_root}/#{@spec.name}/#{@spec.name}.h")
         module_map = <<MAP
 framework module #{@spec.name} {
   umbrella header "#{@spec.name}.h"
