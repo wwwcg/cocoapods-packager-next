@@ -144,10 +144,10 @@ module Pod
       static_libs = static_libs_in_sandbox('build') + static_libs_in_sandbox('build-sim') + vendored_libraries
       libs = ios_architectures.map do |arch|
         library = "#{@static_sandbox_root}/build/package-#{arch}.a"
-        `libtool -arch_only #{arch} -static -o #{library} #{static_libs.join(' ')}`
-        library
-      end
-
+        `libtool -arch_only #{arch} -static -o #{library} #{static_libs.join(' ')} 2> /dev/null`
+        library if File.exist?(library)
+      end.compact
+    
       `lipo -create -output #{output} #{libs.join(' ')}`
     end
 
@@ -290,7 +290,7 @@ MAP
       libs = file_accessors.flat_map(&:vendored_static_frameworks).map { |f| f + f.basename('.*') } || []
       libs += file_accessors.flat_map(&:vendored_static_libraries)
       @vendored_libraries = libs.compact.map(&:to_s)
-      puts "Final vendored libraries: #{@vendored_libraries}"
+      puts "Vendored libraries: #{@vendored_libraries}"
     
       @vendored_libraries
     end
