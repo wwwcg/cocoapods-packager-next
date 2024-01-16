@@ -277,16 +277,20 @@ MAP
 
     def vendored_libraries
       if @vendored_libraries
-        @vendored_libraries
+        return @vendored_libraries
       end
       file_accessors = if @exclude_deps
+                         puts "Excluding dependencies"
                          @file_accessors
                        else
+                         puts "Including dependencies"
                          @static_installer.pod_targets.flat_map(&:file_accessors)
                        end
       libs = file_accessors.flat_map(&:vendored_static_frameworks).map { |f| f + f.basename('.*') } || []
       libs += file_accessors.flat_map(&:vendored_static_libraries)
       @vendored_libraries = libs.compact.map(&:to_s)
+      puts "Final vendored libraries: #{@vendored_libraries}"
+    
       @vendored_libraries
     end
 
@@ -304,10 +308,28 @@ MAP
     end
 
     def ios_architectures
-      archs = %w(x86_64 i386 arm64 armv7 armv7s)
-      vendored_libraries.each do |library|
-        archs = `lipo -info #{library}`.split & archs
+      xcode_version_string = `xcodebuild -version`.strip.split()[1]
+      xcode_version = Pod::Version.new(xcode_version_string)
+      UI.puts "current xcode version: #{xcode_version}"
+      archs = if xcode_version >= Pod::Version.new('14.0')
+        # i386 & armv7/armv7s has been deprecated in Xcode14
+        %w(x86_64 arm64 arm64e)
+      elsif xcode_version < Pod::Version.new('10.0')
+        %w(x86_64 i386 arm64 armv7 armv7s)
+      else
+        %w(x86_64 i386 arm64 arm64e armv7 armv7s)
       end
+      UI.puts "Initial architectures: #{archs}"
+      
+      vendored_libraries.each do |library|
+        library_archs = `lipo -info #{library}`.split
+        UI.puts "Architectures for #{library}: #{library_archs}"
+        
+        archs = library_archs & archs
+        UI.puts "Intersected architectures: #{archs}"
+      end
+      
+      UI.puts "Final architectures: #{archs}"
       archs
     end
 
